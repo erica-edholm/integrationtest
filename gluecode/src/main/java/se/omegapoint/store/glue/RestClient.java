@@ -4,6 +4,7 @@ package se.omegapoint.store.glue;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -58,6 +59,20 @@ public class RestClient {
                 .as("Return code for " + objectToPost.getClass() + " POST")
                 .isIn(HttpStatus.OK, HttpStatus.CREATED);
         return exchange.getBody();
+    }
+
+    public <R,T> R postToUriInvalid(URI uri, T objectToPost){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON_UTF8));
+        final HttpEntity<T> httpEntity = new HttpEntity<>(objectToPost, headers);
+        try {
+            final ResponseEntity<R> exchange = restTemplate.exchange(uri, HttpMethod.POST, httpEntity, new ParameterizedTypeReference<R>() {
+            });
+        }catch (HttpClientErrorException error){
+                assertThat(error.getStatusCode()).isNotIn(HttpStatus.OK, HttpStatus.CREATED);
+                return (R) error;
+        }
+        return null;
     }
 
     public <T> void putToUri(URI uri, T objectToPut){
