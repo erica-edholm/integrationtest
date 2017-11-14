@@ -1,0 +1,8 @@
+### Intellij ###
+.idea/*
+*.iml
+
+### Maven ###
+build*
+*target*
+
