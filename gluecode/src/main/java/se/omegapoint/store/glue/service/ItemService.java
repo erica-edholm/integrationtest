@@ -10,10 +10,12 @@ import se.omegapoint.store.glue.exceptions.NotFoundException;
 import java.net.URI;
 import java.util.List;
 
+import static se.omegapoint.store.glue.Constants.BASE_URL;
+
 @Component
 public class ItemService {
 
-    private final String itemURI = "http://localhost:8080/api/articles";
+    private final String itemURI = BASE_URL + "/api/articles";
 
     private final RestClient restClient;
 

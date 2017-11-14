@@ -13,11 +13,12 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static se.omegapoint.store.glue.Constants.BASE_URL;
 
 @Component
 public class BasketService{
 
-    private final String basketURI = "http://ec2-52-59-239-228.eu-central-1.compute.amazonaws.com:8080/api/basket";
+    private final String basketURI = BASE_URL + "/api/basket";
     private final RestClient restClient;
     private final TestSession testSession;
 
