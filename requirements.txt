@@ -1,0 +1,95 @@
+Article: 
+[/api/articles] 
+GET request should list all available articles
+
+[/api/articles/{id}]
+GET request with a valid article id should list one specific article
+GET request with an invalid article id should return error
+Invalid id: 
+* non existent UUID
+* faulty UUID
+
+Basket: 
+[/api/basket]
+POST request without body should return an empty basket
+X nr of POST requests without body should return X nr of unique baskets (unique ids)
+GET request should return error
+
+[/api/basket/{id}]
+GET request with a valid basket id should list given basket
+GET request with an invalid basket id should return error
+
+POST request without body should return error
+POST request with a valid ArticleDTO in body should return the basket with updated articlelist
+POST request with a valid ArticleDTO in body with invalid or non-existen basketId should return an error
+
+[/api/basket/{id}/checkout]
+POST request with a valid basket id should return paymentDTO
+POST request with an invalid basket id should return error
+
+Delivery info:
+[/api/deliveryInfo/{id}]
+POST request with a valid delivery id and valid UpdateDeliveryInfoDTO against should return updated delivery info
+POST request with an invalid delivery id whether the request has a valid body or not should return error
+POST request with a valid delivery id and an invalid UpdateDeliveryInfoDTO should return error
+
+valid UpdateDeliveryInfoDTO:
+Non-null and non-empty firstname, lastname, address, postalcode, city. 
+Valid PostalCode:
+postal code which matches the regexp "ddd dd"
+ 
+Checkout:
+[/api/checkout/{id}/pay]
+
+POST request with a valid payment id and valid paymentDTO should return paymentDTO with hasBeenPayed set to true
+POST request with an invalid paymentId with or without valid body should return error
+POST request with a valid paymentId and with invalid paymentDTO should return error
+
+Valid paymentDTO:
+* Non-null basketDTO with at least 1 article, a totalCost > 0, which contains a valid deliveryInfoDTO
+* amountToPay > 0
+* amountToPay matches totalCost in basket
+* hasBeenPayed set to false
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
