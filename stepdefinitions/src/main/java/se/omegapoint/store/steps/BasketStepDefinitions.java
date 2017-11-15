@@ -20,8 +20,10 @@ public class BasketStepDefinitions implements En {
 
         When("^adding the article to the basket$", basketService::whenAddingTheArticlesToBasket);
 
-        Then("^basket \"(does|doesnt)\" contains the articles$", (DoesDoesnt doesDoesnt) -> basketService.thenBasketContainsTheArticles(doesDoesnt));
         When("^adding invalid article to the basket$", () -> basketService.whenAddingInvalidArticleToTheBasket());
+
+        Then("^basket \"(does|doesnt)\" contains the articles$", (DoesDoesnt doesDoesnt) -> basketService.thenBasketContainsTheArticles(doesDoesnt));
+
         Then("^an \"([^\"]*)\" exception should be returned$", (Integer status) -> basketService.thenAnErrorShouldBeReturned(HttpStatus.valueOf(status)));
     }
 }

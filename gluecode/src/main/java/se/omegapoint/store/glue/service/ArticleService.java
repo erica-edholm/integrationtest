@@ -11,11 +11,11 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Component
-public class ItemService {
+public class ArticleService {
 
 
 
-    public ItemService() {
+    public ArticleService() {
     }
 
     public void givenOneRandomValidArticle() {

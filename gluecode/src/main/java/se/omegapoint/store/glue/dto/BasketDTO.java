@@ -12,7 +12,7 @@ public class BasketDTO {
 
     private DeliveryInfoDTO deliveryInfo;
 
-    private MoneyDTO price;
+    private MoneyDTO totalCost;
 
     public BasketDTO() {
     }
