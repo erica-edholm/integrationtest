@@ -6,6 +6,7 @@ public class PaymentDTO {
 
     private UUID id;
     private BasketDTO basket;
+    private MoneyDTO amountToPay;
     private boolean hasBeenPayed;
 
     public PaymentDTO(){
