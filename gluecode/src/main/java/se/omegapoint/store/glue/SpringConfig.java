@@ -10,9 +10,5 @@ import org.springframework.web.client.RestTemplate;
 @ComponentScan(basePackages = {"se.omegapoint.store"})
 public class SpringConfig {
 
-    @Bean
-    public RestTemplate getRestTemplate() {
-        return new RestTemplate();
-    }
 
 }

@@ -1,34 +1,52 @@
 package se.omegapoint.store.glue.service;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import se.omegapoint.store.glue.RestClient;
-import se.omegapoint.store.glue.TestSession;
 import se.omegapoint.store.glue.dto.ArticleDTO;
-import se.omegapoint.store.glue.exceptions.NotFoundException;
+import se.omegapoint.store.glue.dto.MoneyDTO;
+import se.omegapoint.store.glue.enums.ValidOrInvalid;
 
-import java.net.URI;
-import java.util.List;
+import java.util.UUID;
 
-import static se.omegapoint.store.glue.Constants.BASE_URL;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Component
 public class ItemService {
 
-    private final String itemURI = BASE_URL + "/api/articles";
 
-    private final RestClient restClient;
 
-    private final TestSession testSession;
-
-    public ItemService(RestClient restClient, TestSession testSession) {
-        this.restClient = restClient;
-        this.testSession = testSession;
+    public ItemService() {
     }
 
-    public void givenOneRandomArticle() {
-        List<ArticleDTO> articleDTOS = restClient.get(URI.create(itemURI), new ParameterizedTypeReference<List<ArticleDTO>>() {});
-        ArticleDTO randomItem =  articleDTOS.stream().findAny().orElseThrow(() -> new NotFoundException("Could not find any articles"));
-        testSession.put(ArticleDTO.class, randomItem);
+    public void givenOneRandomValidArticle() {
+        ArticleDTO randomArticle = BasketService.baskets.getArticles().saveRandomArticleFromArticleList();
+        assertThat(randomArticle).isNotNull();
+
+    }
+
+    public void givenOneRandomInvalidArticle() {
+        ArticleDTO invalidArticle = new ArticleDTO(UUID.randomUUID(), "invalid article", new MoneyDTO(Integer.toUnsignedLong(1234)));
+        BasketService.baskets.getArticles().saveInvalidArticle(invalidArticle);
+    }
+
+    public void createArticles(Integer nrOfArticles, ValidOrInvalid validOrInvalid) {
+        for(int i = 0; i < nrOfArticles; i++){
+            switch(validOrInvalid){
+                case valid:
+                    givenOneRandomValidArticle();
+                    break;
+                case invalid:
+                    givenOneRandomInvalidArticle();
+                    break;
+                default:
+                    throw new AssertionError(validOrInvalid + " is not implemented yet");
+            }
+        }
+
+
+    }
+
+    public void setPriceToZeroForArticle() {
+        BasketService.baskets.getArticles().updatePriceTo(0L);
     }
 }

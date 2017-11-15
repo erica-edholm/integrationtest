@@ -10,15 +10,11 @@ public class BasketDTO {
 
     private List<ArticleDTO> articles;
 
+    private DeliveryInfoDTO deliveryInfo;
+
+    private MoneyDTO price;
+
     public BasketDTO() {
-        id = UUID.randomUUID();
-        articles = new ArrayList<>();
-    }
-
-    public BasketDTO(UUID id, List<ArticleDTO> articles) {
-
-        this.id = id;
-        this.articles = articles;
     }
 
     public void add(ArticleDTO articleDTO) {

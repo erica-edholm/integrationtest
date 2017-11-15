@@ -1,24 +1,28 @@
 package se.omegapoint.store.glue;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gherkin.deps.com.google.gson.Gson;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import se.omegapoint.store.glue.dto.ErrorDTO;
 
+import java.awt.*;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@Component
 public class RestClient {
 
     private RestTemplate restTemplate;
 
-    public RestClient(RestTemplate restTemplate){
-        this.restTemplate = restTemplate;
+    public RestClient(){
+        this.restTemplate = new RestTemplate();
     }
 
     public <R> R get(URI uri, Class<R> returnType){
@@ -61,7 +65,7 @@ public class RestClient {
         return exchange.getBody();
     }
 
-    public <R,T> R postToUriInvalid(URI uri, T objectToPost){
+    public <R,T> R postToUriInvalid(URI uri, T objectToPost) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON_UTF8));
         final HttpEntity<T> httpEntity = new HttpEntity<>(objectToPost, headers);
@@ -69,8 +73,11 @@ public class RestClient {
             final ResponseEntity<R> exchange = restTemplate.exchange(uri, HttpMethod.POST, httpEntity, new ParameterizedTypeReference<R>() {
             });
         }catch (HttpClientErrorException error){
-                assertThat(error.getStatusCode()).isNotIn(HttpStatus.OK, HttpStatus.CREATED);
-                return (R) error;
+            String errorString = error.getResponseBodyAsString();
+            ObjectMapper mapper = new ObjectMapper();
+
+            ErrorDTO result = mapper.readValue(errorString, ErrorDTO.class);
+                return (R) result;
         }
         return null;
     }

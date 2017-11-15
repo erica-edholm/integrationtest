@@ -7,17 +7,17 @@ public class ArticleDTO {
 
     private UUID id;
 
-    private String descriptor;
+    private String description;
 
-    private Long price;
+    private MoneyDTO price;
 
 
     protected ArticleDTO() {
     }
 
-    public ArticleDTO(UUID id, String descriptor, Long price) {
+    public ArticleDTO(UUID id, String description, MoneyDTO price) {
         this.id = id;
-        this.descriptor = descriptor;
+        this.description = description;
         this.price = price;
     }
 
@@ -25,11 +25,11 @@ public class ArticleDTO {
         return id;
     }
 
-    public String getDescriptor() {
-        return descriptor;
+    public String getDescription() {
+        return description;
     }
 
-    public Long getPrice(){ return price; }
+    public MoneyDTO getPrice(){ return price; }
 
     @Override
     public boolean equals(Object o) {
@@ -39,14 +39,14 @@ public class ArticleDTO {
         ArticleDTO that = (ArticleDTO) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (descriptor != null ? !descriptor.equals(that.descriptor) : that.descriptor != null) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
         return price != null ? price.equals(that.price) : that.price == null;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (descriptor != null ? descriptor.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
         return result;
     }
@@ -55,9 +55,13 @@ public class ArticleDTO {
     public String toString() {
         return "ArticleDTO{" +
                 "id=" + id +
-                ", descriptor='" + descriptor + '\'' +
+                ", description='" + description + '\'' +
                 ", price=" + price +
                 '}';
+    }
+
+    public void setPrice(MoneyDTO price) {
+        this.price = price;
     }
 }
 

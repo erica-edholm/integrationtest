@@ -1,61 +1,65 @@
 package se.omegapoint.store.glue.service;
 
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import se.omegapoint.store.glue.RestClient;
-import se.omegapoint.store.glue.TestSession;
+import se.omegapoint.store.glue.domain.Baskets;
 import se.omegapoint.store.glue.dto.BasketDTO;
 import se.omegapoint.store.glue.dto.ArticleDTO;
+import se.omegapoint.store.glue.dto.ErrorDTO;
+import se.omegapoint.store.glue.enums.DoesDoesnt;
 
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static se.omegapoint.store.glue.Constants.BASE_URL;
 
 @Component
 public class BasketService{
 
-    private final String basketURI = BASE_URL + "/api/basket";
-    private final RestClient restClient;
-    private final TestSession testSession;
+    /**
+     *
+     */
 
-    public BasketService(RestClient restClient, TestSession testSession) {
-        this.restClient = restClient;
-        this.testSession = testSession;
+    static Baskets baskets = new Baskets();
+
+    @Autowired
+    public BasketService() {
     }
 
     public void givenAnEmptyBasketWithoutArticles() {
-        BasketDTO basketDTO =
-                restClient
-                        .postToUri(URI.create(basketURI),
-                                void.class,
-                                new ParameterizedTypeReference<BasketDTO>() {});
+        BasketDTO basketDTO = baskets.createAndSaveBasket();
         assertThat(basketDTO).isNotNull();
         assertThat(basketDTO.getArticles()).isEmpty();
-        testSession.put(BasketDTO.class, basketDTO);
     }
 
-    public void whenAddingTheArticleToTheBasket() {
-        BasketDTO basketDTO = testSession.get(BasketDTO.class);
-        ArticleDTO articleDTO = testSession.get(ArticleDTO.class);
-        List<UUID> itemList = new ArrayList<>();
-        itemList.add(articleDTO.getId());
-        BasketDTO updatedBasketDTO =
-                restClient
-                        .postToUri(URI.create(basketURI + "/" + basketDTO.getId()),
-                                itemList,
-                                new ParameterizedTypeReference<BasketDTO>() {});
+    public void whenAddingTheArticlesToBasket() {
+
+        BasketDTO updatedBasketDTO = baskets.addSavedValidArticlesToBasket();
         assertThat(updatedBasketDTO).isNotNull();
-        testSession.put(BasketDTO.class, updatedBasketDTO);
     }
 
-    public void thenBasketContainsTheItem() {
-        BasketDTO basketDTO = testSession.get(BasketDTO.class);
-        ArticleDTO articleDTO = testSession.get(ArticleDTO.class);
-        assertThat(basketDTO.getArticles()).contains(articleDTO);
+    public void whenAddingInvalidArticleToTheBasket() {
+        baskets.addSavedInvalidArticlesToBasket();
+    }
 
+    public void thenBasketContainsTheArticles(DoesDoesnt doesDoesnt) {
+        BasketDTO basketDTO = baskets.getBasketWithArticles();
+        List<ArticleDTO> articleDTO = baskets.getArticles().getSavedValidArticles();
+        articleDTO.forEach(article ->
+                {
+                    if(DoesDoesnt.does.equals(doesDoesnt)){
+                        assertThat(basketDTO.getArticles()).contains(article);
+                    }else if(DoesDoesnt.doesnt.equals(doesDoesnt)){
+                        assertThat(basketDTO.getArticles()).doesNotContain(article);
+                    }
+
+        }
+        );
+
+    }
+
+    public void thenAnErrorShouldBeReturned(HttpStatus expectedHttpStatus) {
+        ErrorDTO errorDTO = baskets.getErrorResponse();
+        assertThat(errorDTO.getStatus()).isEqualTo(expectedHttpStatus);
     }
 }
